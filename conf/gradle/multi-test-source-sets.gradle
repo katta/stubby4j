@@ -1,0 +1,37 @@
+testSets {
+    integrationTest {
+        dirName = 'integration-test'
+    }
+
+    functionalTest {
+        dirName = 'functional-test'
+    }
+
+    loadTest {
+        dirName = 'load-test'
+    }
+}
+
+tasks.withType(Test).configureEach {
+    reports.html.enabled = false
+    reports.junitXml.enabled = false
+    ignoreFailures = false
+    testLogging {
+        events /*"passed", */ "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+
+    filter {
+        if (project.hasProperty("ciRun")) {
+            excludeTestsMatching "*Flaky*"
+        }
+    }
+}
+
+test.outputs.upToDateWhen { false }
+integrationTest.outputs.upToDateWhen { false }
+functionalTest.outputs.upToDateWhen { false }
+loadTest.outputs.upToDateWhen { false }
